@@ -10,6 +10,26 @@ function scanVideos() {
     return;
   }
 
+  // Load existing metadata to preserve dates for previously scanned videos
+  const existingMap = {};
+  if (fs.existsSync(outputFile)) {
+    try {
+      const existingData = JSON.parse(fs.readFileSync(outputFile, 'utf-8'));
+      if (Array.isArray(existingData)) {
+        existingData.forEach(item => {
+          if (item.name) {
+            existingMap[item.name] = {
+              date: item.date,
+              timestamp: item.timestamp
+            };
+          }
+        });
+      }
+    } catch (e) {
+      console.warn("Gagal membaca videos.json lama, metadata baru akan dibuat:", e.message);
+    }
+  }
+
   const files = fs.readdirSync(videosDir);
   const videoData = [];
 
@@ -19,18 +39,28 @@ function scanVideos() {
       const filePath = path.join(videosDir, file);
       const stats = fs.statSync(filePath);
       
-      // Coba deteksi tanggal dari nama file terlebih dahulu (misal: "2026-06-11 23-57-33.mp4")
       let fileDate = '';
-      const dateMatch = file.match(/^(\d{4}-\d{2}-\d{2})/);
-      if (dateMatch) {
-        fileDate = dateMatch[1];
+      let fileTimestamp = 0;
+
+      // Jika file sudah pernah terdaftar, gunakan data lama agar tidak berubah
+      if (existingMap[file]) {
+        fileDate = existingMap[file].date;
+        fileTimestamp = existingMap[file].timestamp;
       } else {
-        // Fallback ke birthtime (creation time) atau mtime (modification time)
-        const targetDate = stats.birthtime && stats.birthtime.getFullYear() > 1970 ? stats.birthtime : stats.mtime;
-        const year = targetDate.getFullYear();
-        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-        const day = String(targetDate.getDate()).padStart(2, '0');
-        fileDate = `${year}-${month}-${day}`;
+        // Deteksi apakah nama file diawali dengan tanggal YYYY-MM-DD
+        const dateMatch = file.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (dateMatch) {
+          fileDate = dateMatch[1];
+          fileTimestamp = new Date(fileDate).getTime();
+        } else {
+          // File baru yang diupload saat ini: gunakan tanggal sekarang
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(now.getDate()).padStart(2, '0');
+          fileDate = `${year}-${month}-${day}`;
+          fileTimestamp = now.getTime();
+        }
       }
 
       // Nama bersih tanpa ekstensi untuk tampilan
@@ -42,7 +72,7 @@ function scanVideos() {
         path: `videos/${encodeURIComponent(file)}`, // Encode URL path characters properly
         size: stats.size,
         date: fileDate,
-        timestamp: new Date(fileDate).getTime() || stats.mtime.getTime()
+        timestamp: fileTimestamp
       });
     }
   });
@@ -59,4 +89,5 @@ if (require.main === module) {
 }
 
 module.exports = { scanVideos };
+
 
