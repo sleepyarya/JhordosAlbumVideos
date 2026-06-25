@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const endDateInput = document.getElementById('filter-end-date');
   const sortSelect = document.getElementById('filter-sort');
   const btnResetFilters = document.getElementById('btn-reset-filters');
+  const searchInput = document.getElementById('filter-search');
   
   // Modal Elements
   const videoModal = document.getElementById('video-modal');
@@ -134,8 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const startDate = startDateInput.value;
     const endDate = endDateInput.value;
     const sortVal = sortSelect.value;
+    const searchTerm = searchInput.value.toLowerCase().trim();
 
     filteredVideos = videos.filter(video => {
+      // Filter Search
+      if (searchTerm) {
+        const cleanTitle = video.displayName.replace(/_/g, ' ').toLowerCase();
+        const cleanName = video.name.toLowerCase();
+        if (!cleanTitle.includes(searchTerm) && !cleanName.includes(searchTerm)) {
+          return false;
+        }
+      }
       // Filter Tanggal Mulai
       if (startDate && video.date < startDate) {
         return false;
@@ -164,10 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
     startDateInput.value = '';
     endDateInput.value = '';
     sortSelect.value = 'newest';
+    searchInput.value = '';
     applyFilters();
   }
 
   // Event Listeners for Filters
+  searchInput.addEventListener('input', applyFilters);
   startDateInput.addEventListener('change', applyFilters);
   endDateInput.addEventListener('change', applyFilters);
   sortSelect.addEventListener('change', applyFilters);
