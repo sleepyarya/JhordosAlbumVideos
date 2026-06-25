@@ -1,0 +1,13 @@
+{
+  "name": "album-cinem-jrd",
+  "version": "1.0.0",
+  "description": "Personal video album with neon purple styling, sorting, pagination, and a 3D book flip intro.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "node dev.js",
+    "metadata": "node generate-metadata.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
