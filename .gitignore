@@ -1,12 +1,6 @@
 # Dependencies
 node_modules/
 
-# Video files (too large for GitHub — regenerate locally with node generate-metadata.js)
-videos/
-
-# Generated metadata (regenerate locally)
-videos.json
-
 # OS files
 .DS_Store
 Thumbs.db

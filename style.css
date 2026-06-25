@@ -184,6 +184,7 @@ body {
   border: 2px solid var(--neon-purple);
   box-shadow: 0 0 20px var(--neon-purple-glow), inset 0 0 25px rgba(176, 38, 255, 0.15);
   z-index: 3;
+  transform: rotateY(0deg) translateZ(3px);
   transform-origin: left center;
   transition: transform 1.6s cubic-bezier(0.65, 0.05, 0.36, 1);
 }
@@ -302,7 +303,7 @@ body {
   background: #0d091a;
   border: 1px solid #1c152e;
   z-index: 2;
-  transform: rotateY(-5deg);
+  transform: rotateY(-5deg) translateZ(2px);
   transform-origin: left center;
   transition: transform 1.4s ease;
 }
@@ -313,6 +314,7 @@ body {
   border: 2px solid var(--neon-cyan);
   box-shadow: 0 0 20px var(--neon-cyan-dim);
   z-index: 1;
+  transform: rotateY(0deg) translateZ(1px);
 }
 
 .logo-inner {
@@ -342,11 +344,11 @@ body {
 
 /* Trigger Open Animations */
 .album-overlay.opened .front-cover {
-  transform: rotateY(-135deg);
+  transform: rotateY(-135deg) translateZ(3px);
 }
 
 .album-overlay.opened .page-middle {
-  transform: rotateY(-125deg);
+  transform: rotateY(-125deg) translateZ(2px);
 }
 
 .album-overlay.opened .book {
